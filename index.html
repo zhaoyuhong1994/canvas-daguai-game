@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+
+    <style>
+        body {
+            background: url(images/bz1.jpg);
+            background-size: 100%;
+        }
+
+        canvas {
+            margin-left: 250px;
+            margin-top: 50px;
+            border-radius: 10px;
+            /* position: relative;  */
+        }
+
+        .box {
+            width: 800px;
+            height: 500px;
+            position: absolute;
+            top: 58px;
+            left: 258px;
+            background: url(images/fengmian.jpg);
+            background-size: 800px 500px;
+            border-radius: 15px;
+        }
+
+        .start1 {
+            width: 200px;
+            height: 100px;
+            position: absolute;
+            top: 220px;
+            right: 30px;
+            background: url(images/start555.png);
+            background-size: 100%;
+            border-radius: 15px;
+        }
+        .p1{
+            font-size: 50px;
+            position: absolute;
+            right: 140px;
+            top: 50px;
+            font-weight: bold;
+            color: orange;
+            font-style: italic;
+        }
+        .p2{
+            font-size: 50px;
+            position: absolute;
+            top: 100px;
+            right: 70px;
+            font-weight: bold;
+        }
+
+        .start1:hover {
+            cursor: pointer;
+            box-shadow: 2px 2px 2px chocolate;
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="mycanvas" width="800" height="500"></canvas>
+    <div class="box">
+        <p class="p1">悟空</p>
+        <p class="p2">傳</p>
+        <div class="start1"></div>
+    </div>
+    <audio src="music/music2.mp3" controls style="display:none" id="music2" loop></audio>
+    <audio src="music/music3.mp3" controls style="display:none" id="music" loop></audio>
+    <audio src="music/baoqi.mp3" id="baoqi"></audio>
+    <audio src="music/baozha1.mp3" id="baozha1"></audio>
+    <audio src="music/feiji5.mp3" id="zhishengji"></audio>
+    <audio src="music/feiji6.mp3" id="feiji"></audio>
+    <audio src="music/sheji3.mp3" id="jiguang"></audio>
+    <audio src="music/sing.mp3" id="sing"></audio>
+    <audio src="music/xiannv.mp3" id="xiannv"></audio>
+    <audio src="music/xiao1.mp3" id="xiao"></audio>
+    <audio src="music/over5.mp3" id="over"></audio>
+    <audio src="music/man.mp3" id="man"></audio>
+    <script src="js/bg.js"></script>
+    <script src="js/swk.js"></script>
+    <script src="js/mountain.js"></script>
+    <script src="js/house.js"></script>
+    <script src="js/em.js"></script>
+    <script src="js/plane.js"></script>
+    <script src="js/fjzd.js"></script>
+    <script src="js/fjzds.js"></script>
+    <script src="js/planes.js"></script>
+    <script src="js/boom.js"></script>
+    <script src="js/tao.js"></script>
+    <script src="js/Qg.js"></script>
+    <script src="js/boomboom.js"></script>
+    <script src="js/number.js"></script>
+    <script src="js/die.js"></script>
+    <script type="text/javascript">
+        // 得到画布
+        var mycanvas = document.getElementById('mycanvas');
+        // 创建上下文，这个上下文和咱们学的this无关，只不过同名
+        // 画布，打点调用getContext()，得到上下文，里面写2d平面
+        var ctx = mycanvas.getContext('2d');
+        var start1 = document.getElementsByClassName('start1')[0];
+        var box = document.getElementsByClassName('box')[0];
+        var music1 = document.getElementById("music1");
+        var music = document.getElementById("music");
+        var jiguang = document.getElementById("jiguang");
+
+        //-------------------------------------------------------------
+        //                      图片加载器
+        //-------------------------------------------------------------
+
+        // 做一个图片对象
+        var R = {
+            "bg6": "images/bg6.png",
+            "swk1": "images/swk1.png",
+            "swk2": "images/sw2.png",
+            "shan": "images/shan.png",
+            "house1": "images/house1.png",
+            "house2": "images/house2.png",
+            "house3": "images/house3.png",
+            "feichuan": "images/feichuan.png",
+            "em": "images/btg.png",
+            "plane": "images/fj.gif",
+            "fjzd": "images/fjzd.png",
+            "fjzds": "images/san.png",
+            "planes": "images/zsj.png",
+            "flower": "images/flower.png",
+            "tao": "images/tao.png",
+            "qg": "images/qg.png",
+            "wx": "images/wx.png",
+            "blood": "images/blood.png",
+            "boom": "images/boom.png",
+            "baoji": "images/baoji.png",
+            "shanghai": "images/shanghai.png",
+            "0": "images/1.png",
+            "1": "images/2.png",
+            "2": "images/3.png",
+            "3": "images/4.png",
+            "4": "images/5.png",
+            "5": "images/6.png",
+            "6": "images/7.png",
+            "7": "images/8.png",
+            "8": "images/9.png",
+            "9": "images/10.png",
+            "xueliangtiao": "images/xueliangtiao.png",
+            "shuzi": "images/shuzi.png",
+            "fenshu": "images/fenshu1.png",
+            "die": "images/die2.jpg",
+            "die1": "images/die1.jpg",
+            "over": "images/over2.png"
+        };
+
+
+        // 已经加载完毕的图片数量
+        var count = 0;
+        // 图片总数，就是R这个对象键的个数，固定写法
+        var allnumber = Object.keys(R).length;
+        // 遍历这个图片对象
+        for (var k in R) {
+            // 写IIFE的目的是将全局变量变为局部变量
+            (function (k) {
+                var image = new Image();
+                image.src = R[k];
+                // 当某一张图片加载完毕后
+                image.onload = function () {
+                    // 计数
+                    count++;
+
+                    // 显示在画布上
+                    ctx.font = '30px 宋体';
+                    // 居中
+                    ctx.textAlign = 'center';
+                    // 清屏
+                    ctx.clearRect(0, 0, 800, 500);
+                    // 显示
+                    ctx.fillText('正在加载资源' + count + '/' + allnumber + '，请稍后', 400, 250);
+                    // 图片加载好了之后，就要把R这个对象的值，变为image对象。
+                    // 为什么要变？？方便后面使用。
+                    R[k] = image;
+                    // 加载完每张图片之后，都要问一句，全部都加载完了么？？
+                    if (count === allnumber) {
+                        start1.onclick = function () {
+                            box.style.display = "none";
+                            music2.play();
+                            start();
+                        }
+                    }
+                }
+            })(k)
+        }
+
+        var bg = new Bg();
+        var swk = new Swk();
+        var mtArr = [];
+        var houseArr = [];
+        var emArr = [];
+        var planeArr = [];
+        var planesArr = [];
+        var fjzdArr = [];
+        var fjzdsArr = [];
+        var taoArr = [];
+        var qgArr = [];
+        var boomboomArr = [];
+        var changjing = "noboom";
+        var isblood = 0;
+        var blood = 9;
+        var score = 0;
+        var number = new Number();
+        // new Planes();
+        // ----------------------------------------------
+        //                  定时器
+        // ----------------------------------------------
+        var f = 0;
+        function start() {
+            // 帧编号
+            // 定时器，注意一定只有一个定时器
+            setInterval(function () {
+                // 清屏
+                ctx.clearRect(0, 0, 800, 500);
+                // 帧编号加1
+                bg.update();
+                bg.render();
+
+                if (changjing == "noboom" || changjing == "noattack") {
+                    number.render();
+                    if (f % 70 == 0) {
+                        var mt = new Mt();
+                    }
+                    if (f % 400 == 0) {
+                        var house = new House();
+                    }
+                    if (f % 400 == 0) {
+                        var em = new Em();
+                    }
+                    if (f % 400 == 0) {
+                        var plane = new Plane();
+                    }
+                    if (f % 300 == 0) {
+                        var planes = new Planes();
+                    }
+                    for (var i = 0; i < mtArr.length; i++) {
+                        mtArr[i].update();
+                        mtArr[i] && mtArr[i].render();
+                    }
+                    for (var i = 0; i < houseArr.length; i++) {
+                        houseArr[i].update();
+                        houseArr[i] && houseArr[i].render();
+                    }
+                    for (var i = 0; i < emArr.length; i++) {
+                        emArr[i].update();
+                        emArr[i] && emArr[i].render();
+                    }
+                    for (var i = 0; i < planeArr.length; i++) {
+                        planeArr[i].update();
+                        planeArr[i] && planeArr[i].render();
+                    }
+                    for (var i = 0; i < planesArr.length; i++) {
+                        planesArr[i].update();
+                        planesArr[i] && planesArr[i].render();
+                    }
+                    for (var i = 0; i < fjzdArr.length; i++) {
+                        fjzdArr[i].update();
+                        fjzdArr[i] && fjzdArr[i].render();
+                    }
+                    for (var i = 0; i < fjzdsArr.length; i++) {
+                        fjzdsArr[i].update();
+                        fjzdsArr[i] && fjzdsArr[i].render();
+                    }
+                    for (var i = 0; i < taoArr.length; i++) {
+                        taoArr[i].update();
+                        taoArr[i] && taoArr[i].render();
+                    }
+                    for (var i = 0; i < qgArr.length; i++) {
+                        qgArr[i].update();
+                        qgArr[i] && qgArr[i].render();
+                    }
+                    for (var i = 0; i < boomboomArr.length; i++) {
+                        boomboomArr[i].update();
+                        boomboomArr[i] && boomboomArr[i].render();
+                    }
+                    swk.update();
+                    swk.render();
+                }
+                if (changjing == "boom") {
+                    number.render();
+                    if (f % 70 == 0) {
+                        var mt = new Mt();
+                    }
+                    if (f % 400 == 0) {
+                        var house = new House();
+                    }
+                    if (f % 400 == 0) {
+                        var em = new Em();
+                    }
+                    if (f % 400 == 0) {
+                        var plane = new Plane();
+                    }
+                    if (f % 300 == 0) {
+                        var planes = new Planes();
+                    }
+                    for (var i = 0; i < mtArr.length; i++) {
+                        mtArr[i].update();
+                        mtArr[i] && mtArr[i].render();
+                    }
+                    for (var i = 0; i < houseArr.length; i++) {
+                        houseArr[i].update();
+                        houseArr[i] && houseArr[i].render();
+                    }
+
+                    for (var i = 0; i < emArr.length; i++) {
+                        emArr[i].update();
+                        emArr[i] && emArr[i].render();
+                    }
+
+                    for (var i = 0; i < planeArr.length; i++) {
+                        planeArr[i].update();
+                        planeArr[i] && planeArr[i].render();
+                    }
+                    for (var i = 0; i < planesArr.length; i++) {
+                        planesArr[i].update();
+                        planesArr[i] && planesArr[i].render();
+                    }
+                    for (var i = 0; i < fjzdArr.length; i++) {
+                        fjzdArr[i].update();
+                        fjzdArr[i] && fjzdArr[i].render();
+                    }
+                    for (var i = 0; i < fjzdsArr.length; i++) {
+                        fjzdsArr[i].update();
+                        fjzdsArr[i] && fjzdsArr[i].render();
+                    }
+                    for (var i = 0; i < taoArr.length; i++) {
+                        taoArr[i].update();
+                        taoArr[i] && taoArr[i].render();
+                    }
+                    for (var i = 0; i < qgArr.length; i++) {
+                        qgArr[i].update();
+                        qgArr[i] && qgArr[i].render();
+                    }
+                    for (var i = 0; i < boomboomArr.length; i++) {
+                        boomboomArr[i].update();
+                        boomboomArr[i] && boomboomArr[i].render();
+                    }
+                    boom();
+                }
+                if (changjing == "attack") {
+                    number.render();
+                    if (f % 70 == 0) {
+                        var mt = new Mt();
+                    }
+                    if (f % 400 == 0) {
+                        var house = new House();
+                    }
+                    if (f % 400 == 0) {
+                        var em = new Em();
+                    }
+                    if (f % 400 == 0) {
+                        var plane = new Plane();
+                    }
+                    if (f % 300 == 0) {
+                        var planes = new Planes();
+                    }
+                    // if (f % 300 == 0) {
+                    //     var qg = new Qg();
+                    // }
+                    for (var i = 0; i < mtArr.length; i++) {
+                        mtArr[i].update();
+                        mtArr[i] && mtArr[i].render();
+                    }
+                    for (var i = 0; i < houseArr.length; i++) {
+                        houseArr[i].update();
+                        houseArr[i] && houseArr[i].render();
+                    }
+
+                    for (var i = 0; i < emArr.length; i++) {
+                        emArr[i].update();
+                        emArr[i] && emArr[i].render();
+                    }
+
+                    for (var i = 0; i < planeArr.length; i++) {
+                        planeArr[i].update();
+                        planeArr[i] && planeArr[i].render();
+                    }
+                    for (var i = 0; i < planesArr.length; i++) {
+                        planesArr[i].update();
+                        planesArr[i] && planesArr[i].render();
+                    }
+                    for (var i = 0; i < fjzdArr.length; i++) {
+                        fjzdArr[i].update();
+                        fjzdArr[i] && fjzdArr[i].render();
+                    }
+                    for (var i = 0; i < fjzdsArr.length; i++) {
+                        fjzdsArr[i].update();
+                        fjzdsArr[i] && fjzdsArr[i].render();
+                    }
+                    for (var i = 0; i < taoArr.length; i++) {
+                        taoArr[i].update();
+                        taoArr[i] && taoArr[i].render();
+                    }
+                    for (var i = 0; i < qgArr.length; i++) {
+                        qgArr[i].update();
+                        qgArr[i] && qgArr[i].render();
+                    }
+                    for (var i = 0; i < boomboomArr.length; i++) {
+                        boomboomArr[i].update();
+                        boomboomArr[i] && boomboomArr[i].render();
+                    }
+                    swk.update();
+                    swk.render();
+                    if (f % 7 == 0) {
+                        new Qg(swk.x, swk.y);
+                    }
+                }
+                if (changjing == "die") {
+                    // number.render();
+                    die();
+                }
+
+                f++;
+                // 设置字号
+                ctx.font = '20px 黑体';
+                // 左对齐
+                ctx.textAlign = 'left';
+                // 显示文字，显示帧编号
+                // ctx.fillText(f, 10, 20);
+
+            }, 20);
+
+
+        }
+        document.onkeydown = function (e) {
+            event.preventDefault();
+            switch (e.keyCode) {
+                case 40:
+                    swk.move();
+                    swk.turn("down");
+                    break;
+                case 38:
+                    swk.move();
+                    swk.turn("up");
+                    break;
+                case 39:
+                    swk.move();
+                    swk.turn("right");
+                    break;
+                case 37:
+                    swk.move();
+                    swk.turn("left");
+                    break;
+                case 32:
+                    // swk.move();
+                    // swk.turn("right");
+                    changjing = "attack";
+                    // new Qg(swk.x, swk.y);
+                    break;
+            }
+        }
+        document.onkeyup = function (e) {
+            switch (e.keyCode) {
+                case 39:
+                    swk.stop();
+                    break;
+                case 32:
+                    swk.stop();
+                    changjing = "noattack";
+                    break;
+            }
+        }
+    </script>
+</body>
+
+</html>
